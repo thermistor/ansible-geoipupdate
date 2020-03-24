@@ -1,0 +1,43 @@
+---
+- name: Add the geoipupdate repository key
+  apt_key:
+    id: "{{ geoipupdate_repo_apt_key_id }}"
+    keyserver: keyserver.ubuntu.com
+    state: present
+
+- name: Add geoipupdate repository
+  apt_repository:
+    repo: "{{ geoipupdate_repo }}"
+    state: present
+
+- name: Add geoipupdate package
+  apt: pkg=geoipupdate state=present
+
+- name: Overwrite dist geoip config file
+  template:
+    src: GeoIP.conf.j2
+    dest: /etc/GeoIP.conf
+
+- name: Create user to run geoipupdate
+  user:
+    name: "{{ geoipupdate_user }}"
+    home: "{{ geoipupdate_user_dir }}"
+    system: True
+    shell: /bin/bash
+    state: present
+
+- name: Configure cron job
+  cron:
+    name: geoipupdate
+    cron_file: geoipupdate
+    hour: "3"
+    minute: "38"
+    weekday: "4"
+    job: /usr/bin/geoipupdate
+    user: "{{ geoipupdate_user }}"
+
+- name: Add MAILTO env for cron job
+  cronvar:
+    name: MAILTO
+    value: "{{ geoipupdate_email }}"
+    cron_file: geoipupdate

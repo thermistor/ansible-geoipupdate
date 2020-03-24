@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Weston Triemstra
+  description: Configure geoipupdate
+  company: Netsign
+
+  license: MIT
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+
+  galaxy_tags:
+    - geoip
+    - geoipupdate
+
+dependencies: []

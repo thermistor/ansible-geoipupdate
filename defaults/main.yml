@@ -1,0 +1,10 @@
+---
+geoipupdate_repo_apt_key_id: 'F44B38CE3DB1BF64B61DBD28DE1997DCDE742AFA'
+geoipupdate_repo: 'ppa:maxmind/ppa'
+geoipupdate_edition_ids:
+  - 'GeoLite2-ASN'
+  - 'GeoLite2-City'
+  - 'GeoLite2-Country'
+geoipupdate_user: geoip
+geoipupdate_user_dir: /usr/share/geoip
+geoipupdate_database_dir: /usr/share/geoip
