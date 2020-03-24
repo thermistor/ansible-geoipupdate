@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: geoipupdate
   author: Weston Triemstra
   description: Configure geoipupdate
   company: Netsign
