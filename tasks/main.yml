@@ -26,6 +26,13 @@
     shell: /bin/bash
     state: present
 
+- name: Run geoipupdate to get initial download
+  command: /usr/bin/geoipupdate
+  args:
+    creates: "{{ geoipupdate_database_dir }}/{{ geoipupdate_edition_ids | first }}.mmdb"
+  become: True
+  become_user: "{{ geoipupdate_user }}"
+
 - name: Configure cron job
   cron:
     name: geoipupdate
