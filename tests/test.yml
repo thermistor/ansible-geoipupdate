@@ -1,5 +1,9 @@
 ---
-- hosts: localhost
+- name: Test the geoipupdate role
+  hosts: localhost
   remote_user: root
   roles:
-    - geoipupdate
+    - role: thermistor.geoipupdate
+      geoipupdate_account_id: 123456
+      geoipupdate_license_key: example
+      geoipupdate_email: you@example.com
