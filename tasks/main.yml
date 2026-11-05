@@ -1,40 +1,69 @@
 ---
-- name: Add the geoipupdate repository key
-  apt_key:
-    id: "{{ geoipupdate_repo_apt_key_id }}"
-    keyserver: keyserver.ubuntu.com
+# Needed for deb822_repository
+- name: Install python3-debian
+  ansible.builtin.apt:
+    pkg: python3-debian
     state: present
+
+- name: Remove the old apt_repository style geoipupdate source
+  ansible.builtin.file:
+    path: "/etc/apt/sources.list.d/ppa_maxmind_ppa_{{ ansible_facts['distribution_release'] }}.list"
+    state: absent
+
+- name: Download the geoipupdate repository signing key
+  ansible.builtin.get_url:
+    url: "{{ geoipupdate_repo_key_url }}"
+    dest: /etc/apt/keyrings/maxmind.asc
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Add geoipupdate repository
-  apt_repository:
-    repo: "{{ geoipupdate_repo }}"
+  ansible.builtin.deb822_repository:
+    name: maxmind
+    types: deb
+    uris: "{{ geoipupdate_repo_uri }}"
+    suites: "{{ geoipupdate_repo_suite }}"
+    components: main
+    signed_by: /etc/apt/keyrings/maxmind.asc
     state: present
+  register: geoipupdate_repository
+
+- name: Update apt cache if the geoipupdate repository changed
+  ansible.builtin.apt:
+    update_cache: true
+  when: geoipupdate_repository is changed # noqa: no-handler
 
 - name: Add geoipupdate package
-  apt: pkg=geoipupdate state=present
+  ansible.builtin.apt:
+    pkg: geoipupdate
+    state: present
 
 - name: Overwrite dist geoip config file
-  template:
+  ansible.builtin.template:
     src: GeoIP.conf.j2
     dest: /etc/GeoIP.conf
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Create user to run geoipupdate
-  user:
+  ansible.builtin.user:
     name: "{{ geoipupdate_user }}"
     home: "{{ geoipupdate_user_dir }}"
-    system: True
+    system: true
     shell: /bin/bash
     state: present
 
 - name: Run geoipupdate to get initial download
-  command: /usr/bin/geoipupdate
+  ansible.builtin.command: /usr/bin/geoipupdate
   args:
     creates: "{{ geoipupdate_database_dir }}/{{ geoipupdate_edition_ids | first }}.mmdb"
-  become: True
+  become: true
   become_user: "{{ geoipupdate_user }}"
 
 - name: Configure cron job
-  cron:
+  ansible.builtin.cron:
     name: geoipupdate
     cron_file: geoipupdate
     hour: "3"
@@ -44,7 +73,7 @@
     user: "{{ geoipupdate_user }}"
 
 - name: Add MAILTO env for cron job
-  cronvar:
+  community.general.cronvar:
     name: MAILTO
     value: "{{ geoipupdate_email }}"
     cron_file: geoipupdate

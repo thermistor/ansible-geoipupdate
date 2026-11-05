@@ -1,6 +1,7 @@
 ---
-geoipupdate_repo_apt_key_id: 'F44B38CE3DB1BF64B61DBD28DE1997DCDE742AFA'
-geoipupdate_repo: 'ppa:maxmind/ppa'
+geoipupdate_repo_key_url: https://keyserver.ubuntu.com/pks/lookup?op=get&options=mr&search=0xF44B38CE3DB1BF64B61DBD28DE1997DCDE742AFA
+geoipupdate_repo_uri: https://ppa.launchpadcontent.net/maxmind/ppa/ubuntu
+geoipupdate_repo_suite: "{{ ansible_facts['distribution_release'] }}"
 geoipupdate_edition_ids:
   - 'GeoLite2-ASN'
   - 'GeoLite2-City'

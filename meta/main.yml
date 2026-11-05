@@ -1,18 +1,19 @@
+---
 galaxy_info:
   role_name: geoipupdate
+  namespace: thermistor
   author: Weston Triemstra
   description: Configure geoipupdate
   company: Netsign
-
   license: MIT
-
-  min_ansible_version: 2.4
+  min_ansible_version: '2.16'
 
   platforms:
     - name: Ubuntu
       versions:
-        - xenial
-        - bionic
+        - jammy
+        - noble
+        - resolute
 
   galaxy_tags:
     - geoip
